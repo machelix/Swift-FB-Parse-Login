@@ -44,12 +44,31 @@ class ViewController: UIViewController {
                     
                     self.presentViewController(alertController, animated: true) {
                         //after login actions
+                        self.getUserInfo()
                     }
                 } else {
                     print("Uh oh. The user cancelled the Facebook login.")
                     print(error)
                 }
         })
+    }
+    
+    func getUserInfo() {
+        if let session = PFFacebookUtils.session() {
+            if session.isOpen {
+                FBRequestConnection.startForMeWithCompletionHandler({ (connection: FBRequestConnection!, result: AnyObject!, error: NSError!) -> Void in
+                    if error != nil {
+                        print(error)
+                    } else {
+                        print("Profile picture: http://graph.facebook.com/\(result.objectID)/picture?type=large")
+                        print("Name: "+result.first_name + " "+result.last_name )
+                    }
+                })
+            }
+        } else {
+            let user:PFUser = PFUser.currentUser()!
+            print(user)
+        }
     }
     
     
